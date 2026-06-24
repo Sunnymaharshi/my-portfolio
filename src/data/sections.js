@@ -53,7 +53,7 @@ export const SECTIONS = [
     // it sits just under the (large, bright) disk instead of on top of it.
     // World-space offset → scales correctly with viewing distance.
     hintOffset: [0, -4.5, 0],
-    view: { pos: [22, 5, 52], look: [25, 6, 70] },
+    view: { pos: [22, 5, 52], look: [20, 6, 70] },
     content: {
       kind: 'about',
       eyebrow: '// ORIGIN',
@@ -105,7 +105,7 @@ export const SECTIONS = [
     world: [-90, 32, -40],
     // Float the marker just below the black hole's disk.
     hintOffset: [0, -4.5, 0],
-    view: { pos: [-66, 24, -45], look: [-90, 32, -40] },
+    view: { pos: [-66, 24, -45], look: [-120, 38, -50] },
     content: {
       kind: 'skills',
       eyebrow: '// SKILL NEBULA',
@@ -143,7 +143,7 @@ export const SECTIONS = [
     label: 'Projects',
     color: '#45c7c0',
     world: [85, -35, -90],
-    view: { pos: [66, -27, -83], look: [85, -35, -90] },
+    view: { pos: [66, -27, -83], look: [106, -45, -86] },
     content: {
       kind: 'projects',
       eyebrow: '// PROJECT SECTOR',
@@ -190,7 +190,7 @@ export const SECTIONS = [
     label: 'Contact',
     color: '#4a90d9',
     world: [-40, -12, -175],
-    view: { pos: [-34, -10, -159], look: [-40, -12, -175] },
+    view: { pos: [-34, -10, -159], look: [-36, -12, -195] },
     content: {
       kind: 'contact',
       eyebrow: '// COMM STATION',

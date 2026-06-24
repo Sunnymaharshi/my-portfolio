@@ -21,7 +21,7 @@
   right: 0;
   bottom: 96px;
   z-index: 16;
-  width: min(440px, 92vw);
+  width: min(540px, 92vw);
   display: flex;
   align-items: center;
   pointer-events: none;            /* only the panel itself is interactive */
@@ -93,6 +93,7 @@
 
 .lead {
   margin-top: 10px;
+  margin-bottom: 20px;
   font-size: 14px;
   line-height: 1.55;
   color: var(--text-secondary);
