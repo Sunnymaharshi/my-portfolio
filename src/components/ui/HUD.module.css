@@ -77,3 +77,12 @@
   white-space: nowrap;
   animation: holopulse 5s ease-in-out infinite;
 }
+
+/* On phones the centered section label collides with the brand — hide it
+   (the NavMenu already shows the active section) and shrink the brand. */
+@media (max-width: 720px) {
+  .targetLabel { display: none; }
+  .brandName { font-size: 9px; letter-spacing: 0.16em; }
+  .brand { top: 16px; left: 16px; }
+  .audioBtn { top: 14px; right: 14px; }
+}

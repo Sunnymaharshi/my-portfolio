@@ -269,8 +269,9 @@ These plain-React components render in `App.jsx` (only after `loaded`), layered 
 **NavMenu** (`src/components/ui/NavMenu.jsx`, `z-index: 30`) — persistent bottom-center pill: Home · About · Skills · Projects · Contact (active item highlighted by `sectionIndex`, colored dot), plus a **Tour** toggle and a **Résumé** link. Clicking an item → `navState.request = section.view` (guided fly-to). **Tour** chains `setTimeout`s (`TOUR_DWELL = 7000ms`) flying through sectors 1→4 and auto-stops; manual nav cancels it.
 
 **InfoPanel** (`src/components/ui/InfoPanel.jsx`, scrim `z-index: 14`, panel/hero `z-index: 16`) — renders the active section's content from `sections.js`:
-- **Hero (section 0)**: centered overlay — eyebrow, name, role, tagline, CTAs (View Projects / About / Contact → guided fly-to), drag/scroll hint. `pointer-events: none` except the CTA buttons, so it never blocks exploration.
-- **Sections 1–4**: a right-side glass card (`min(440px, 92vw)`, scrollable) with a **focus scrim** (gradient darkening the background toward the panel side) so text stays legible over the busy universe. `key={section.id}` re-mounts the card on section change to replay the entrance animation. The scrim is `pointer-events: none` (drag still rotates the camera through it); only the card is interactive.
+- **Hero (section 0)**: centered overlay — name, role, tagline, CTAs (View Projects / About / Contact → guided fly-to), drag/scroll hint. `pointer-events: none` except the CTA buttons, so it never blocks exploration. **Visibility is owned by `App` (`showHero`)**: shown at first load, hidden the moment the user explores (a window-level `wheel`/drag-`pointermove`/`touchmove` listener sets it false), and shown again **only** when the user taps **Home** in the NavMenu (`onHome` → `setShowHero(true)`). No idle auto-return (the old `useExploring` idle-fade was removed because the hero kept reappearing mid-exploration).
+- **Sections 1–4 (desktop)**: a right-side glass card (`min(440px, 92vw)`, scrollable) with a **focus scrim** (gradient darkening the background toward the panel side) so text stays legible over the busy universe. `key={section.id}` re-mounts the card on section change to replay the entrance animation. The scrim is `pointer-events: none` (drag still rotates the camera through it); only the card is interactive.
+- **Sections 1–4 (mobile ≤720px)**: the card becomes a **collapsible bottom sheet** so the 3D object stays visible — the `PanelShell` header (`sheetHead`, a `<button>`) toggles an `expanded` state; collapsed (default) shows only eyebrow + title with a chevron, expanded reveals the scrollable `sheetBody`. Desktop ignores `expanded` (chevron hidden, body always shown). Scrim hidden on mobile; `EdgeHints` markers are not rendered on mobile (`IS_MOBILE` in `App.jsx`) and the NavMenu collapses to a single compact row (Résumé/Tour dropped — Résumé still in the Contact sheet).
 - Content shapes per `kind`: `about` (stats grid + experience + certs + education), `skills` (category groups → chips), `projects` (cards: name, tagline, blurb, bullets, stack chips, "View code" link), `contact` (link rows + Résumé button).
 
 **LoadingScreen** — fixed fullscreen overlay (`z-index: 100`). **Constellation name reveal**: a dense full-screen starfield (DOM `div` dots, ~320), with small star-nodes arranged into the letters of **MAHARSHI / REDDY**; a thin luminous `<polyline>` traces **each letter** (letters are NOT joined). Single-stroke glyphs in `GLYPHS` (unit-grid point arrays); `layoutLine` produces one polyline per letter; the global letter order drives a draw stagger. The name-nodes are deliberately small so that when the line fades they dissolve into the starfield rather than spelling the name in bright dots.
@@ -378,3 +379,23 @@ Font file: `public/fonts/SpaceMono-Regular.ttf`. Star node size is 0.04u radius,
 - **Dynamic particle geometry needs `frustumCulled={false}`** — the ShootingStars trail/dust `<line>`/`<points>` start with all-zero positions, so their auto-computed bounding sphere sits at the origin and three.js frustum-culls them even though the verts later move far away (the trail was invisible until this was set). Any buffer geometry whose vertices are written per-frame from a zero/placeholder start should disable frustum culling (or call `geometry.computeBoundingSphere()` each frame).
 - **Round particle sprites** — `NebulaParticles` and `ProjectGalaxy` debris use `circleSprite()` (`src/utils/sprite.js`, a shared soft radial-gradient `CanvasTexture`) as the pointsMaterial `map`, so points render as round glows, not the default square quads. `Stars` uses `AdditiveBlending` for a natural glow; its fragment already masks to a circle via `gl_PointCoord`.
 - **Billboard inside moving group** — `<Billboard>` in BlackHole `SkillOrb` is parented to a group that moves every frame. Billboard rotation is applied on top, so labels always face camera.
+
+## Future improvements (suggested, not yet done)
+
+Ideas raised during review, kept here so they aren't lost. Roughly in priority order. `[both] / [mobile] / [desktop]` = where it matters.
+
+**High impact (portfolio value / correctness):**
+1. **Project thumbnails** `[both]` — add a preview image per project card (`sections.js` → `content.projects[].image`) and render it in `InfoPanel` `Projects`. Live `github` links are now set (codesense, api-rate-limiter); add `liveUrl` + a "Live demo" link too if/when the projects are deployed. (Thumbnails deferred per owner.)
+2. **Accessible / SEO content fallback** `[both]` — section text only renders when you navigate to that section (`sectionIndex`-gated), so crawlers + screen readers see ~only the hero. Add an always-present visually-hidden full-content block, or a "Read as page" 2D toggle. Big for SEO + a11y.
+3. **WebGL / no-3D fallback** `[both]` — if WebGL is unavailable or the context is lost, show a graceful static fallback (name, role, links, résumé) instead of a black screen. (R3F `onCreated`/error boundary, or a `WEBGL.isWebGLAvailable()` check before mounting `SpaceScene`.)
+
+**UX polish:**
+4. **Onboarding cue** `[both]` — a subtle one-time animated hint (or gentle idle camera drift) teaching drag / scroll / pinch, instead of relying on the static hero hint line.
+5. **`prefers-reduced-motion`** `[both, esp. mobile]` — honor the OS setting: calm drifting/auto-animations/bloom; saves battery on phones.
+6. **Mobile bottom-sheet polish** `[mobile]` — add swipe-up-to-expand (not just tap) + a grab-handle visual; add a one-time "pinch to fly" hint (the gesture isn't discoverable).
+7. **Keyboard navigation + focus rings** `[desktop]` — number keys / arrows to jump sections; visible focus outlines on the NavMenu buttons (currently pointer/touch only).
+
+**Smaller niceties:**
+8. **Copy-email button** on Contact `[both]` — tap-to-copy beside the `mailto:`.
+9. **Hover affordance** on interactive 3D objects (skill orbs, project stars) `[desktop]` — a clearer highlight/label so it reads as interactive.
+10. **Section orientation cue** `[both]` — faint "you are here" / progress; low priority since the NavMenu already highlights the active section.

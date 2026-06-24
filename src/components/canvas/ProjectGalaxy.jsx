@@ -14,14 +14,14 @@ export const PROJECTS = [
     name: 'Codesense',
     color: '#9b8cf5',
     offset: [-4, 3, -2],
-    github: 'https://github.com/Sunnymaharshi',
+    github: 'https://github.com/Sunnymaharshi/codesense',
   },
   {
     id: 'rate-limiter',
     name: 'API Rate Limiter',
     color: '#6fb0ef',
     offset: [5, -3, 3],
-    github: 'https://github.com/Sunnymaharshi',
+    github: 'https://github.com/Sunnymaharshi/python/tree/main/fast-api/api-rate-limiter',
   },
 ]
 

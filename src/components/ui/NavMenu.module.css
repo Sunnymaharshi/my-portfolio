@@ -106,9 +106,12 @@
 .resume:hover { background: var(--accent-glow); box-shadow: 0 0 18px rgba(123, 179, 240, 0.5); }
 
 @media (max-width: 720px) {
-  .nav { gap: 6px; padding: 6px 8px; bottom: 14px; max-width: 96vw; flex-wrap: wrap; justify-content: center; }
-  .item { padding: 7px 10px; font-size: 11px; }
+  /* Single compact row — no wrap. Résumé/Tour drop out (Résumé lives in the
+     Contact sheet) so the bar doesn't cluster into two rows. */
+  .nav { gap: 2px; padding: 5px 6px; bottom: 14px; max-width: 96vw; }
+  .item { padding: 7px 9px; font-size: 11px; letter-spacing: 0.02em; }
   .item .dot { display: none; }
   .divider { display: none; }
   .tour { display: none; }
+  .resume { display: none; }
 }

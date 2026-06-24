@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import styles from './InfoPanel.module.css'
 import { navState } from '../../utils/sharedState'
 import { SECTION_BY_INDEX } from '../../data/sections'
@@ -8,39 +8,12 @@ function goTo(index) {
   if (s) navState.request = s.view
 }
 
-// True while the user is actively exploring (dragging or scrolling), flipping
-// back to false after `idleMs` of stillness. Lets the centred hero get out of
-// the way during flight, then return when the user pauses — content is hidden,
-// never lost. (The canvas sits full-screen behind, so its drag/wheel events
-// bubble to window.)
-function useExploring(idleMs = 2500) {
-  const [exploring, setExploring] = useState(false)
-  useEffect(() => {
-    let timer
-    const bump = () => {
-      setExploring(true)
-      clearTimeout(timer)
-      timer = setTimeout(() => setExploring(false), idleMs)
-    }
-    const onMove = (e) => { if (e.buttons) bump() }  // only while dragging
-    window.addEventListener('pointermove', onMove)
-    window.addEventListener('wheel', bump, { passive: true })
-    window.addEventListener('touchmove', bump, { passive: true })
-    return () => {
-      clearTimeout(timer)
-      window.removeEventListener('pointermove', onMove)
-      window.removeEventListener('wheel', bump)
-      window.removeEventListener('touchmove', bump)
-    }
-  }, [idleMs])
-  return exploring
-}
-
 // ── Hero (section 0) — the landing identity + calls to action ────────────────
-function Hero({ c }) {
-  const exploring = useExploring()
+// `visible` is owned by App: shown at first load, hidden once the user starts
+// exploring, and shown again only when they tap Home. (No idle auto-return.)
+function Hero({ c, visible }) {
   return (
-    <div className={`${styles.heroWrap} ${exploring ? styles.dimmed : ''}`}>
+    <div className={`${styles.heroWrap} ${visible ? '' : styles.dimmed}`}>
       <div className={styles.hero}>
         <h1 className={styles.heroName}>{c.name}</h1>
         <p className={styles.heroRole}>{c.role}</p>
@@ -57,18 +30,32 @@ function Hero({ c }) {
 }
 
 // ── Reusable section panel chrome ───────────────────────────────────────────
+// Desktop: a right-side card with everything visible.
+// Mobile: a bottom sheet — the header bar is a toggle; collapsed (default) it
+// shows just eyebrow + title so the 3D object stays visible above, expanded it
+// reveals the scrollable content. (The `expanded` class is ignored on desktop.)
 function PanelShell({ c, accent, children }) {
+  const [expanded, setExpanded] = useState(false)
   return (
     <>
       <div className={styles.scrim} />
       <div className={styles.panelWrap}>
-        <article className={styles.panel} style={{ '--accent': accent }}>
-          <header className={styles.head}>
-            <p className={styles.eyebrow}>{c.eyebrow}</p>
-            <h2 className={styles.title}>{c.title}</h2>
+        <article className={`${styles.panel} ${expanded ? styles.expanded : ''}`} style={{ '--accent': accent }}>
+          <button
+            className={styles.sheetHead}
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+          >
+            <span className={styles.headText}>
+              <span className={styles.eyebrow}>{c.eyebrow}</span>
+              <span className={styles.title}>{c.title}</span>
+            </span>
+            <span className={styles.chevron} aria-hidden="true">⌃</span>
+          </button>
+          <div className={styles.sheetBody}>
             {c.lead && <p className={styles.lead}>{c.lead}</p>}
-          </header>
-          {children}
+            {children}
+          </div>
         </article>
       </div>
     </>
@@ -170,12 +157,12 @@ function Contact({ c }) {
   )
 }
 
-export default function InfoPanel({ sectionIndex }) {
+export default function InfoPanel({ sectionIndex, showHero }) {
   const section = SECTION_BY_INDEX[sectionIndex]
   if (!section) return null
   const c = section.content
 
-  if (c.kind === 'hero') return <Hero c={c} key="hero" />
+  if (c.kind === 'hero') return <Hero c={c} visible={showHero} key="hero" />
 
   // key forces a fresh entrance animation each time the section changes
   return (

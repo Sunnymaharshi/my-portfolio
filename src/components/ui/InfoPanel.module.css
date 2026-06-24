@@ -53,7 +53,25 @@
 .panel::-webkit-scrollbar-thumb { background: rgba(74, 144, 217, 0.35); border-radius: 4px; }
 
 /* ── Panel typography ─────────────────────────────────────────────────────── */
-.head { margin-bottom: 18px; }
+/* Header doubles as the bottom-sheet toggle on mobile; on desktop it's a plain
+   header (chevron hidden, body always visible). */
+.sheetHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 0;
+  background: none;
+  border: none;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  cursor: default;
+}
+.headText { display: flex; flex-direction: column; }
+.chevron { display: none; }
 
 .eyebrow {
   font-family: var(--font-mono);
@@ -300,9 +318,63 @@
   color: var(--text-dim);
 }
 
+@keyframes sheetUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+
 @media (max-width: 720px) {
-  .panelWrap { top: 64px; bottom: 132px; width: 100vw; }
-  .panel { margin: 0 12px; padding: 20px; }
-  .scrim { background: linear-gradient(180deg, rgba(5,13,26,0) 20%, rgba(5,13,26,0.85) 55%); }
+  /* Section content is a bottom sheet so the 3D object stays visible above it. */
+  .panelWrap {
+    top: auto;
+    bottom: 76px;            /* sit above the nav */
+    left: 0; right: 0;
+    width: 100vw;
+    height: auto;
+    display: block;
+    pointer-events: none;    /* only the sheet itself is interactive */
+  }
+  .scrim { display: none; }
+
+  .panel {
+    width: auto;
+    margin: 0 10px;
+    padding: 13px 16px;
+    max-height: 76vh;
+    border-radius: 18px;
+    border-left: 1px solid rgba(74, 144, 217, 0.22);
+    background: rgba(8, 18, 34, 0.92);
+    overflow: hidden;
+    animation: sheetUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .sheetHead { cursor: pointer; align-items: center; margin-bottom: 0; }
+  .chevron {
+    display: block;
+    flex: none;
+    font-size: 20px;
+    line-height: 1;
+    color: var(--accent, var(--accent-blue));
+    transition: transform 0.25s ease;
+  }
+  .panel.expanded .chevron { transform: rotate(180deg); }
+
+  /* Collapsed by default (object visible); expands on tapping the header. */
+  .sheetBody {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin-top 0.35s ease;
+  }
+  .panel.expanded .sheetBody {
+    max-height: 60vh;
+    overflow-y: auto;
+    opacity: 1;
+    margin-top: 14px;
+  }
+
   .heroWrap { padding-bottom: 150px; }
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
+  .title { font-size: 21px; }
+  .heroName { text-shadow: 0 0 30px rgba(74, 144, 217, 0.35); }
 }

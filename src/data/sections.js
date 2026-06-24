@@ -163,7 +163,7 @@ export const SECTIONS = [
             'A LangGraph agent pre-computes skill scores with zero LLM tokens, driving a registry of React visualisations — heatmaps, skill radars, timelines',
           ],
           stack: ['LangGraph', 'FastEmbed', 'PostgreSQL', 'pgvector', 'Celery', 'Redis', 'FastAPI', 'React', 'Groq'],
-          github: 'https://github.com/Sunnymaharshi',
+          github: 'https://github.com/Sunnymaharshi/codesense',
         },
         {
           name: 'API Rate Limiter',
@@ -177,7 +177,7 @@ export const SECTIONS = [
             'Ships with a live Chart.js + Prometheus dashboard, 79 unit tests and a Locust load suite',
           ],
           stack: ['Python', 'FastAPI', 'Redis', 'Lua', 'Docker', 'Prometheus', 'pytest'],
-          github: 'https://github.com/Sunnymaharshi',
+          github: 'https://github.com/Sunnymaharshi/python/tree/main/fast-api/api-rate-limiter',
         },
       ],
     },
