@@ -185,24 +185,29 @@ function Contact({ c }) {
       <div className={styles.links}>
         {c.links.map((l) => {
           const isEmail = l.href.startsWith('mailto:')
-          return (
-            <a key={l.label} className={styles.link} href={l.href} target={isEmail ? undefined : '_blank'} rel="noreferrer">
-              <span className={styles.linkLabel}>{l.label}</span>
-              <span className={styles.linkValue}>{l.value}</span>
-              {isEmail ? (
+          if (isEmail) {
+            return (
+              <div key={l.label} className={styles.link}>
+                <span className={styles.linkLabel}>{l.label}</span>
+                <span className={styles.linkValue}>{l.value}</span>
                 <button className={styles.copyBtn} onClick={(e) => copyEmail(e, l.value)} title="Copy email">
                   {copied
                     ? <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 8L6 11.5L12.5 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
                     : <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="9" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><path d="M1 5v8a1.5 1.5 0 001.5 1.5H10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
                   }
                 </button>
-              ) : (
-                <span className={styles.linkArrow}>
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
-              )}
+              </div>
+            )
+          }
+          return (
+            <a key={l.label} className={styles.link} href={l.href} target="_blank" rel="noreferrer">
+              <span className={styles.linkLabel}>{l.label}</span>
+              <span className={styles.linkValue}>{l.value}</span>
+              <span className={styles.linkArrow}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
             </a>
           )
         })}

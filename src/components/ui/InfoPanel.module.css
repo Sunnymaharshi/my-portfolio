@@ -376,7 +376,7 @@
     margin: 0 auto 10px;
   }
 
-  .sheetHead { cursor: pointer; align-items: center; margin-bottom: 0; }
+  .sheetHead { cursor: pointer; align-items: center; margin-bottom: 0; -webkit-user-select: none; user-select: none; }
   .chevron {
     display: flex;
     align-items: center;
