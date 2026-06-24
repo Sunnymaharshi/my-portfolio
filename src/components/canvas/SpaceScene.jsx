@@ -24,6 +24,12 @@ const SECTION_ZONES = SECTIONS
   .filter(s => s.index !== 0)
   .map(s => ({ index: s.index, pos: new THREE.Vector3(...s.world) }))
 
+// Touch / small-screen devices: scale back the heaviest GPU work (MSAA + the
+// pixel-ratio the renderer draws at) so the scene stays smooth on phones.
+const IS_MOBILE = typeof window !== 'undefined' && (
+  window.matchMedia?.('(pointer: coarse)').matches || window.innerWidth < 820
+)
+
 // Reusable objects — no per-frame allocation
 const _cursorDir = new THREE.Vector3()
 const _navUp     = new THREE.Vector3(0, 1, 0)
@@ -87,12 +93,35 @@ function DragLookCamera({ onSectionChange }) {
       scrollVel.current = Math.max(-15, Math.min(15, scrollVel.current))
     }
 
+    // One finger = look around. Two fingers (pinch) = fly: spread to move
+    // forward toward the pinch point, pinch in to back up — the touch equivalent
+    // of scroll-to-fly (mobile has no wheel).
     let lastTouch = null
+    let pinchDist = null
     const onTouchStart = (e) => {
-      if (e.touches.length === 1)
+      audioEngine.init()              // first touch unlocks audio
+      if (e.touches.length === 1) {
         lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+        pinchDist = null
+      } else if (e.touches.length === 2) {
+        lastTouch = null
+        const [a, b] = e.touches
+        pinchDist = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY)
+        navState.request = null       // manual flight cancels any guided fly-to
+      }
     }
     const onTouchMove = (e) => {
+      // ── Two-finger pinch → fly ──
+      if (e.touches.length === 2 && pinchDist != null) {
+        const [a, b] = e.touches
+        const d = Math.hypot(b.clientX - a.clientX, b.clientY - a.clientY)
+        cursorPos.current = { x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 }
+        scrollVel.current += (d - pinchDist) * 0.25
+        scrollVel.current = Math.max(-15, Math.min(15, scrollVel.current))
+        pinchDist = d
+        return
+      }
+      // ── One-finger drag → look ──
       if (e.touches.length !== 1 || !lastTouch) return
       const dx = e.touches[0].clientX - lastTouch.x
       const dy = e.touches[0].clientY - lastTouch.y
@@ -104,7 +133,16 @@ function DragLookCamera({ onSectionChange }) {
       euler.x = Math.max(-Math.PI * 0.45, Math.min(Math.PI * 0.45, euler.x))
       camera.quaternion.setFromEuler(euler)
     }
-    const onTouchEnd = () => { lastTouch = null }
+    const onTouchEnd = (e) => {
+      // Lifting one finger of a pinch: keep looking with the remaining finger.
+      if (e.touches.length === 1) {
+        lastTouch = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+        pinchDist = null
+      } else {
+        lastTouch = null
+        pinchDist = null
+      }
+    }
 
     canvas.addEventListener('mousedown', onDown)
     window.addEventListener('mouseup', onUp)
@@ -216,7 +254,7 @@ function Scene({ onSectionChange }) {
 
       <fog attach="fog" args={['#050d1a', 18, 55]} />
 
-      <EffectComposer multisampling={4}>
+      <EffectComposer multisampling={IS_MOBILE ? 0 : 4}>
         <Bloom
           intensity={2.2}
           luminanceThreshold={0.07}
@@ -240,7 +278,7 @@ export default function SpaceScene({ onSectionChange }) {
     <Canvas
       camera={{ position: [0, 12, 200], fov: 60, near: 0.1, far: 800 }}
       gl={{ antialias: true, alpha: false }}
-      dpr={[1, 1.5]}
+      dpr={IS_MOBILE ? 1 : [1, 1.5]}
       style={{ background: '#050d1a' }}
       onCreated={({ camera, gl }) => {
         camera.lookAt(0, 4, 175)

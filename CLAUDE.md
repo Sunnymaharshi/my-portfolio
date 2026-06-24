@@ -120,6 +120,7 @@ All section positions and camera view poses live in **`src/data/sections.js`** (
 - `scroll wheel` → fly in the direction of the cursor (ray from camera through cursor NDC position)
 - `click NavMenu item / EdgeHints waypoint / hero CTA` → **guided fly-to** that section's view pose
 - `Tour` button → auto-fly through sectors 1→4 in order, pausing on each
+- `touch`: one finger = look, two-finger pinch = fly (see Mobile touch)
 - No pointer lock, no keyboard movement, no WASD
 
 **Guided fly-to**: a click sets `navState.request = { pos, look }` (the section's `view` pose from `sections.js`). `DragLookCamera` tweens the camera's **position** (lerp toward `pos`) *and* **orientation** (slerp toward looking at `look`) with framerate-independent damping, then clears the request when within 0.4u. **Any `mousedown` or `wheel` cancels it instantly** (`navState.request = null`) so the user never fights the camera. `view.look` is biased slightly +X so the 3D object sits left-of-centre, leaving the right side clear for the DOM panel.
@@ -288,7 +289,7 @@ These plain-React components render in `App.jsx` (only after `loaded`), layered 
 
 ## Audio (`src/utils/audio.js`)
 
-`audioEngine` singleton (Web Audio API, no asset files). **Blocked until a user gesture** — `audioEngine.init()` is called from the first `mousedown`/`wheel` in `DragLookCamera` and from the HUD audio toggle. Public methods are no-ops until then.
+`audioEngine` singleton (Web Audio API, no asset files). **Blocked until a user gesture** — `audioEngine.init()` is called from the first `mousedown`/`wheel`/`touchstart` in `DragLookCamera` and from the HUD audio toggle. Public methods are no-ops until then. Engine starts **muted** (sound is opt-in via the HUD toggle).
 - **Ambient drone**: detuned low oscillators (55–110 Hz) through a lowpass + filtered-noise "solar wind" bed, with a slow LFO breathing the whole bus. Fades in over 4s.
 - **Reactive whoosh**: looping noise → bandpass → gain. `DragLookCamera` calls `audioEngine.setFlySpeed(|scrollVel|/15)` every frame; gain + bandpass frequency track fly speed (smoothed via `setTargetAtTime`).
 - **`chime(sectionIndex)`** exists (bell-like additive partials) but is **currently not called** — the arrival chime was removed per design feedback. `toggleMute()` ramps the master gain; HUD reflects state.
@@ -299,7 +300,10 @@ These plain-React components render in `App.jsx` (only after `loaded`), layered 
 
 ## Mobile touch
 
-`canvas { touch-action: none }` in globals.css and `gl.domElement.style.touchAction = 'none'` in `onCreated`. Single-finger drag on touch feeds the same euler rotation as mouse drag.
+`canvas { touch-action: none }` in globals.css and `gl.domElement.style.touchAction = 'none'` in `onCreated` (the latter also stops the browser pinch-zooming the page). Touch controls in `DragLookCamera`:
+- **One finger drag** → look around (same euler rotation as mouse drag).
+- **Two-finger pinch** → fly: spreading flies forward toward the pinch midpoint, pinching in backs up (the touch equivalent of scroll-to-fly — mobile has no wheel). Feeds the same `scrollVel` + cursor-ray flight as the wheel; lifting one finger hands back to one-finger look.
+- First `touchstart` calls `audioEngine.init()` (audio unlock parity with mouse/wheel).
 
 ## Build output (4 chunks)
 
@@ -363,7 +367,8 @@ Font file: `public/fonts/SpaceMono-Regular.ttf`. Star node size is 0.04u radius,
 - **Accretion disk bypasses fog** — BlackHole ShaderMaterial has no fog uniforms. Intentional.
 - **Noise grain blend fringes HDR edges** — a `<Noise premultiply blendFunction={SOFT_LIGHT}>` pass at high opacity wraps the black-hole's bright HDR photon ring in a **complement-coloured ring** (the complement of the ring colour is the tell — e.g. an orange/gold halo around the now-cool cyan ring). This cost a long debugging session: the fringe survives Bloom/CA being off and scales with the shader's `holeR`, which makes it look like geometry. Use `BlendFunction.OVERLAY` at `opacity≤0.16` for grain instead. If a colored ring ever reappears on the black hole, suspect the **post-processing chain**, not the shader. (Note: the disk palette is now cool blue/cyan — recolored from gold — so a *warm* fringe is the post-processing tell.)
 - **Audio needs a user gesture** — `audioEngine` is silent until `init()` runs on first click/wheel (browser autoplay policy). Don't expect sound on page load. `init()` (and `toggleMute` when unmuting) calls `ctx.resume()` because browsers can create the context **suspended** even inside a gesture — without the resume the drone is scheduled but never heard (toggle reads ON, no sound). The HUD audio button **starts** sound on first click (rather than muting), then toggles thereafter.
-- **DepthOfField removed** — it made deep space / the hero view blurry (fixed near focus plane), so it's gone. `multisampling={4}` is now the heaviest post setting; drop it first if profiling for low-end GPUs.
+- **DepthOfField removed** — it made deep space / the hero view blurry (fixed near focus plane), so it's gone. `multisampling` is the heaviest post setting.
+- **Mobile perf scaling** — `IS_MOBILE` in `SpaceScene.jsx` (coarse pointer OR `innerWidth < 820`, evaluated once at load) drops `EffectComposer multisampling` `4 → 0` and the Canvas `dpr` `[1,1.5] → 1` on phones, the two biggest GPU costs (MSAA + pixels drawn). If a real device still struggles, next thin the particle counts (Stars 5200, NebulaParticles, dust).
 - **@react-three/postprocessing version** — must stay at v2.x (currently 2.19.1). v3 requires R3F v9.
 - **ConstellationReveal useMemo deps []** — layout computed once on mount; entries/position are static.
 - **troika fillOpacity** — `ref.current.fillOpacity = val` works imperatively in `useFrame` on drei `<Text>` refs.

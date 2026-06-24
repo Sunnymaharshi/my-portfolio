@@ -50,7 +50,7 @@ function Hero({ c }) {
           <button className={styles.btn} onClick={() => goTo(1)}>About me</button>
           <button className={styles.btn} onClick={() => goTo(4)}>Contact</button>
         </div>
-        <p className={styles.heroHint}>Drag to look · scroll to fly — or use the menu below</p>
+        <p className={styles.heroHint}>Drag to look · scroll or pinch to fly — or use the menu below</p>
       </div>
     </div>
   )
