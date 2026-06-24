@@ -43,7 +43,7 @@ export default function App() {
           The 3D world is the immersive stage; reading happens here. */}
       {loaded && <InfoPanel sectionIndex={sectionIndex} showHero={showHero} />}
       {loaded && <EdgeHints activeSectionIndex={sectionIndex} showHero={showHero} />}
-      {loaded && <NavMenu sectionIndex={sectionIndex} onHome={() => setShowHero(true)} />}
+      {loaded && <NavMenu sectionIndex={sectionIndex} onHome={() => setShowHero(true)} onNavigate={() => setShowHero(false)} />}
       {loaded && <HUD sectionIndex={sectionIndex} />}
 
       <LoadingScreen

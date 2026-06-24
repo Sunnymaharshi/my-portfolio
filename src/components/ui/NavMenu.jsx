@@ -16,7 +16,7 @@ function flyTo(index) {
   if (s) navState.request = (IS_MOBILE && s.viewMobile) ? s.viewMobile : s.view
 }
 
-export default function NavMenu({ sectionIndex, onHome }) {
+export default function NavMenu({ sectionIndex, onHome, onNavigate }) {
   const [touring, setTouring] = useState(false)
   const timers = useRef([])
   const resume = SECTION_BY_INDEX[4]?.content?.resume
@@ -42,7 +42,8 @@ export default function NavMenu({ sectionIndex, onHome }) {
 
   const handleNav = (index) => {
     if (touring) stopTour()
-    if (index === 0) onHome?.()   // tapping Home brings the hero back
+    if (index === 0) onHome?.()
+    else onNavigate?.()
     flyTo(index)
   }
 
