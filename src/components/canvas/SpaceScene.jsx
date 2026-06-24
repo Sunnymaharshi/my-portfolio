@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import { cameraState, navState } from '../../utils/sharedState'
 import { audioEngine } from '../../utils/audio'
 import { SECTIONS, SECTION_BY_INDEX } from '../../data/sections'
-import { IS_MOBILE } from '../../utils/device'
+import { IS_MOBILE, RENDER_DPR, RENDER_MSAA } from '../../utils/device'
 
 import Stars from './Stars'
 import Galaxy from './Galaxy'
@@ -253,7 +253,7 @@ function Scene({ onSectionChange }) {
 
       {/* <fog attach="fog" args={['#010508', 30, 90]} /> */}
 
-      <EffectComposer multisampling={IS_MOBILE ? 0 : 4}>
+      <EffectComposer multisampling={RENDER_MSAA}>
         <Bloom
           intensity={2.2}
           luminanceThreshold={0.07}
@@ -277,7 +277,7 @@ export default function SpaceScene({ onSectionChange }) {
     <Canvas
       camera={{ position: [0, 12, 200], fov: 60, near: 0.1, far: 800 }}
       gl={{ antialias: true, alpha: false }}
-      dpr={IS_MOBILE ? 1 : [1, 1.5]}
+      dpr={RENDER_DPR}
       style={{ background: '#000000' }}
       onCreated={({ camera, gl }) => {
         camera.lookAt(0, 4, 175)
