@@ -102,15 +102,19 @@ void main(){
   vec2  d  = vec2(p.x, p.y * yScale);
   float dr = length(d);
 
-  float inner = 0.33;
+  float inner = 0.28;
   float outer = 1.25;
   float band  = smoothstep(inner, inner + 0.06, dr) *
                 (1.0 - smoothstep(outer - 0.45, outer, dr));
 
-  // Rotating turbulent streaks (faster near the inner edge)
-  float swirlA = ang * 2.5 - uTime * (0.55 + 0.6 / max(dr, 0.2));
-  float turb   = fbm(vec2(swirlA, dr * 4.0 - uTime * 0.35));
-  float turb2  = fbm(vec2(swirlA * 1.7 + 3.1, dr * 7.0 + uTime * 0.5));
+  // Rotate the squashed disk vector in place — inner edge faster (Keplerian).
+  // No atan() call so there is no ±π seam; no circular arc sampling so the
+  // value-noise grid never resonates into visible concentric rings.
+  float rotRate = uTime * (0.55 + 0.6 / max(dr, 0.2));
+  float cR = cos(-rotRate), sR = sin(-rotRate);
+  vec2  rd = vec2(d.x * cR - d.y * sR, d.x * sR + d.y * cR);
+  float turb  = fbm(rd * 4.0 + vec2(-uTime * 0.18, 0.0));
+  float turb2 = fbm(rd * 7.3 + vec2(3.14, uTime * 0.22));
   float plasma = mix(turb, turb2, 0.4);
   band *= 0.45 + 0.85 * plasma;
 

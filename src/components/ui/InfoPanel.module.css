@@ -69,6 +69,8 @@
   color: inherit;
   font: inherit;
   cursor: default;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .headText { display: flex; flex-direction: column; }
 .chevron { display: none; }
@@ -344,7 +346,7 @@
   /* Section content is a bottom sheet so the 3D object stays visible above it. */
   .panelWrap {
     top: auto;
-    bottom: 76px;            /* sit above the nav */
+    bottom: max(76px, calc(env(safe-area-inset-bottom, 0px) + 64px)); /* sit above the nav */
     left: 0; right: 0;
     width: 100vw;
     height: auto;
@@ -398,7 +400,7 @@
     margin-top: 14px;
   }
 
-  .heroWrap { padding-bottom: 150px; }
+  .heroWrap { padding-bottom: max(150px, calc(env(safe-area-inset-bottom, 0px) + 130px)); }
   .statsRow { grid-template-columns: repeat(2, 1fr); }
   .title { font-size: 21px; }
   .heroName { text-shadow: 0 0 30px rgba(74, 144, 217, 0.35); }
