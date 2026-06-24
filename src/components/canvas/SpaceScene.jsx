@@ -7,9 +7,12 @@ import * as THREE from 'three'
 import { cameraState, navState } from '../../utils/sharedState'
 import { audioEngine } from '../../utils/audio'
 import { SECTIONS, SECTION_BY_INDEX } from '../../data/sections'
+import { IS_MOBILE } from '../../utils/device'
 
 import Stars from './Stars'
 import Galaxy from './Galaxy'
+import ButterflyNebula from './ButterflyNebula'
+import StarCluster from './StarCluster'
 import BackgroundConstellations from './BackgroundConstellations'
 import NebulaParticles from './NebulaParticles'
 import Planet from './Planet'
@@ -23,12 +26,6 @@ import SectionStars from './SectionBeacons'
 const SECTION_ZONES = SECTIONS
   .filter(s => s.index !== 0)
   .map(s => ({ index: s.index, pos: new THREE.Vector3(...s.world) }))
-
-// Touch / small-screen devices: scale back the heaviest GPU work (MSAA + the
-// pixel-ratio the renderer draws at) so the scene stays smooth on phones.
-const IS_MOBILE = typeof window !== 'undefined' && (
-  window.matchMedia?.('(pointer: coarse)').matches || window.innerWidth < 820
-)
 
 // Reusable objects — no per-frame allocation
 const _cursorDir = new THREE.Vector3()
@@ -235,8 +232,10 @@ function Scene({ onSectionChange }) {
 
       <Stars />
       <Galaxy />
+      <ButterflyNebula position={[150, 20, -105]} rotation={[0.2, Math.PI / 2, 0.12]} />
+      <StarCluster position={[-55, 50, 35]} radius={9} />
       <BackgroundConstellations />
-      <NebulaParticles />
+      {/* <NebulaParticles /> */}
 
       <Planet position={SECTION_BY_INDEX[1].world} scale={2.5} />
 
@@ -252,7 +251,7 @@ function Scene({ onSectionChange }) {
 
       <SectionStars />
 
-      <fog attach="fog" args={['#050d1a', 18, 55]} />
+      {/* <fog attach="fog" args={['#010508', 30, 90]} /> */}
 
       <EffectComposer multisampling={IS_MOBILE ? 0 : 4}>
         <Bloom
@@ -283,6 +282,7 @@ export default function SpaceScene({ onSectionChange }) {
       onCreated={({ camera, gl }) => {
         camera.lookAt(0, 4, 175)
         gl.domElement.style.touchAction = 'none'
+        gl.setClearColor('#050d1a', 1)
       }}
     >
       <Scene onSectionChange={onSectionChange} />

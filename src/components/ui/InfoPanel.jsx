@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import styles from './InfoPanel.module.css'
 import { navState } from '../../utils/sharedState'
 import { SECTION_BY_INDEX } from '../../data/sections'
@@ -11,6 +11,8 @@ function goTo(index) {
 // ── Hero (section 0) — the landing identity + calls to action ────────────────
 // `visible` is owned by App: shown at first load, hidden once the user starts
 // exploring, and shown again only when they tap Home. (No idle auto-return.)
+const IS_MOBILE = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 820
+
 function Hero({ c, visible }) {
   return (
     <div className={`${styles.heroWrap} ${visible ? '' : styles.dimmed}`}>
@@ -23,7 +25,11 @@ function Hero({ c, visible }) {
           <button className={styles.btn} onClick={() => goTo(1)}>About me</button>
           <button className={styles.btn} onClick={() => goTo(4)}>Contact</button>
         </div>
-        <p className={styles.heroHint}>Drag to look · scroll or pinch to fly — or use the menu below</p>
+        <p className={styles.heroHint}>
+          {IS_MOBILE
+            ? 'Drag to look · pinch to fly — or use the menu below'
+            : 'Drag to look · scroll to fly — or use the menu below'}
+        </p>
       </div>
     </div>
   )
@@ -36,11 +42,28 @@ function Hero({ c, visible }) {
 // reveals the scrollable content. (The `expanded` class is ignored on desktop.)
 function PanelShell({ c, accent, children }) {
   const [expanded, setExpanded] = useState(false)
+  const touchY = useRef(null)
+
+  function onTouchStart(e) { touchY.current = e.touches[0].clientY }
+  function onTouchEnd(e) {
+    if (touchY.current === null) return
+    const delta = touchY.current - e.changedTouches[0].clientY
+    if (delta > 40) setExpanded(true)
+    else if (delta < -40) setExpanded(false)
+    touchY.current = null
+  }
+
   return (
     <>
       <div className={styles.scrim} />
       <div className={styles.panelWrap}>
-        <article className={`${styles.panel} ${expanded ? styles.expanded : ''}`} style={{ '--accent': accent }}>
+        <article
+          className={`${styles.panel} ${expanded ? styles.expanded : ''}`}
+          style={{ '--accent': accent }}
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          <div className={styles.grabHandle} aria-hidden="true" />
           <button
             className={styles.sheetHead}
             onClick={() => setExpanded((v) => !v)}
@@ -50,7 +73,11 @@ function PanelShell({ c, accent, children }) {
               <span className={styles.eyebrow}>{c.eyebrow}</span>
               <span className={styles.title}>{c.title}</span>
             </span>
-            <span className={styles.chevron} aria-hidden="true">⌃</span>
+            <span className={styles.chevron} aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M5 12.5L10 7.5L15 12.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </span>
           </button>
           <div className={styles.sheetBody}>
             {c.lead && <p className={styles.lead}>{c.lead}</p>}
@@ -137,16 +164,39 @@ function Projects({ c }) {
 }
 
 function Contact({ c }) {
+  const [copied, setCopied] = useState(false)
+
+  function copyEmail(e, value) {
+    e.preventDefault()
+    e.stopPropagation()
+    navigator.clipboard.writeText(value).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
   return (
     <>
       <div className={styles.links}>
-        {c.links.map((l) => (
-          <a key={l.label} className={styles.link} href={l.href} target="_blank" rel="noreferrer">
-            <span className={styles.linkLabel}>{l.label}</span>
-            <span className={styles.linkValue}>{l.value}</span>
-            <span className={styles.linkArrow}>↗</span>
-          </a>
-        ))}
+        {c.links.map((l) => {
+          const isEmail = l.href.startsWith('mailto:')
+          return (
+            <a key={l.label} className={styles.link} href={l.href} target={isEmail ? undefined : '_blank'} rel="noreferrer">
+              <span className={styles.linkLabel}>{l.label}</span>
+              <span className={styles.linkValue}>{l.value}</span>
+              {isEmail ? (
+                <button className={styles.copyBtn} onClick={(e) => copyEmail(e, l.value)} title="Copy email">
+                  {copied
+                    ? <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 8L6 11.5L12.5 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    : <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="5" y="1" width="9" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><path d="M1 5v8a1.5 1.5 0 001.5 1.5H10" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                  }
+                </button>
+              ) : (
+                <span className={styles.linkArrow}>↗</span>
+              )}
+            </a>
+          )
+        })}
       </div>
       {c.resume && (
         <a className={styles.btnPrimary} href={c.resume} target="_blank" rel="noreferrer" style={{ marginTop: 18, display: 'inline-flex' }}>

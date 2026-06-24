@@ -1,6 +1,9 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { IS_MOBILE } from '../../utils/device'
+
+const cnt = (n) => Math.round(IS_MOBILE ? n * 0.45 : n)  // thin particle counts on mobile
 
 // ── Distant spiral galaxies — logarithmic-spiral particle disks. Placed far
 //    off the flight path as deep-background scenery (fog disabled). Slowly
@@ -119,7 +122,7 @@ export default function Galaxy() {
         scale={1}
         spinSpeed={0.012}
         params={{
-          count: 6000, radius: 26, arms: 3, spin: 0.55, randomness: 0.18,
+          count: cnt(6000), radius: 26, arms: 3, spin: 0.55, randomness: 0.18,
           coreColor: '#ffe6b0', armColor: '#5a8fe0',
         }}
       />
@@ -130,8 +133,30 @@ export default function Galaxy() {
         scale={0.7}
         spinSpeed={-0.018}
         params={{
-          count: 4200, radius: 22, arms: 2, spin: 0.7, randomness: 0.22,
+          count: cnt(4200), radius: 22, arms: 2, spin: 0.7, randomness: 0.22,
           coreColor: '#ffd0d8', armColor: '#7b6fe0',
+        }}
+      />
+      {/* Distant 4-arm spiral, far ahead and above-right */}
+      <SpiralGalaxy
+        position={[200, 100, -360]}
+        rotation={[0.9, -0.3, 0.5]}
+        scale={0.85}
+        spinSpeed={0.014}
+        params={{
+          count: cnt(5200), radius: 24, arms: 4, spin: 0.6, randomness: 0.2,
+          coreColor: '#cfe0ff', armColor: '#6f7fe0',
+        }}
+      />
+      {/* Tilted 2-arm spiral, far behind-left */}
+      <SpiralGalaxy
+        position={[-280, -110, -200]}
+        rotation={[1.4, 0.4, -0.6]}
+        scale={0.6}
+        spinSpeed={-0.02}
+        params={{
+          count: cnt(3600), radius: 20, arms: 2, spin: 0.75, randomness: 0.24,
+          coreColor: '#e6ecff', armColor: '#5aa0d9',
         }}
       />
     </>

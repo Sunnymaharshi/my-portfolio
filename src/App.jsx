@@ -6,10 +6,6 @@ import NavMenu from './components/ui/NavMenu'
 import InfoPanel from './components/ui/InfoPanel'
 import LoadingScreen from './components/ui/LoadingScreen'
 
-const IS_MOBILE = typeof window !== 'undefined' && (
-  window.matchMedia?.('(pointer: coarse)').matches || window.innerWidth < 820
-)
-
 export default function App() {
   const [sectionIndex, setSectionIndex] = useState(0)
   const [mountScene, setMountScene]     = useState(false)  // defer heavy 3D until name is drawn
@@ -46,9 +42,7 @@ export default function App() {
       {/* DOM portfolio layer — readable content, nav and beacons.
           The 3D world is the immersive stage; reading happens here. */}
       {loaded && <InfoPanel sectionIndex={sectionIndex} showHero={showHero} />}
-      {/* Floating in-space markers declutter the small screen; the NavMenu
-          covers navigation on mobile. */}
-      {loaded && !IS_MOBILE && <EdgeHints activeSectionIndex={sectionIndex} />}
+      {loaded && <EdgeHints activeSectionIndex={sectionIndex} />}
       {loaded && <NavMenu sectionIndex={sectionIndex} onHome={() => setShowHero(true)} />}
       {loaded && <HUD sectionIndex={sectionIndex} />}
 

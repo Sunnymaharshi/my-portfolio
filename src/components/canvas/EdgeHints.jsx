@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react'
 import * as THREE from 'three'
 import { cameraState, navState } from '../../utils/sharedState'
 import { SECTIONS } from '../../data/sections'
+import { IS_MOBILE } from '../../utils/device'
 
 // Derived from the single source of truth so positions never drift.
 const TARGETS = SECTIONS
@@ -147,7 +148,7 @@ export default function EdgeHints({ activeSectionIndex }) {
           {/* Coloured star beacon */}
           <div style={{
             color: t.color,
-            fontSize: 22,
+            fontSize: IS_MOBILE ? 16 : 22,
             lineHeight: 1,
             animation: 'edgePulse 2.2s ease-in-out infinite',
           }}>
@@ -156,8 +157,8 @@ export default function EdgeHints({ activeSectionIndex }) {
           {/* Section label */}
           <div style={{
             fontFamily: "'Space Mono', monospace",
-            fontSize: 8,
-            letterSpacing: '0.14em',
+            fontSize: IS_MOBILE ? 7 : 8,
+            letterSpacing: '0.12em',
             color: t.color,
             opacity: 0.85,
             whiteSpace: 'nowrap',
