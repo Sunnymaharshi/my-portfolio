@@ -18,8 +18,16 @@ function flyTo(index) {
 
 export default function NavMenu({ sectionIndex, onHome, onNavigate }) {
   const [touring, setTouring] = useState(false)
+  const [pendingIndex, setPendingIndex] = useState(null)
   const timers = useRef([])
   const resume = SECTION_BY_INDEX[4]?.content?.resume
+
+  // Clear pending once camera arrives at the target section
+  useEffect(() => {
+    if (pendingIndex !== null && sectionIndex === pendingIndex) {
+      setPendingIndex(null)
+    }
+  }, [sectionIndex, pendingIndex])
 
   const clearTour = () => {
     timers.current.forEach(clearTimeout)
@@ -42,16 +50,19 @@ export default function NavMenu({ sectionIndex, onHome, onNavigate }) {
 
   const handleNav = (index) => {
     if (touring) stopTour()
+    setPendingIndex(index)
     if (index === 0) onHome?.()
     else onNavigate?.()
     flyTo(index)
   }
 
+  const activeIndex = pendingIndex ?? sectionIndex
+
   return (
     <nav className={styles.nav} aria-label="Sections">
       <ul className={styles.list}>
         {ITEMS.map((s) => {
-          const active = s.index === sectionIndex
+          const active = s.index === activeIndex
           return (
             <li key={s.id}>
               <button
