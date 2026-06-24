@@ -1,0 +1,48 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 3rem;
+  background: linear-gradient(180deg, rgba(5, 13, 26, 0.9) 0%, transparent 100%);
+  backdrop-filter: blur(4px);
+}
+
+.logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-silver);
+  letter-spacing: 0.15em;
+  text-shadow: 0 0 20px var(--accent-glow);
+}
+
+.links {
+  display: flex;
+  gap: 2rem;
+}
+
+.link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  transition: color 0.3s;
+  letter-spacing: 0.05em;
+}
+
+.link:hover {
+  color: var(--accent-silver);
+  text-shadow: 0 0 12px var(--accent-glow);
+}
+
+.index {
+  color: var(--accent-blue);
+  margin-right: 0.25rem;
+}
