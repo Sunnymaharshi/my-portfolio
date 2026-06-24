@@ -42,7 +42,7 @@ export default function App() {
       {/* DOM portfolio layer — readable content, nav and beacons.
           The 3D world is the immersive stage; reading happens here. */}
       {loaded && <InfoPanel sectionIndex={sectionIndex} showHero={showHero} />}
-      {loaded && <EdgeHints activeSectionIndex={sectionIndex} />}
+      {loaded && <EdgeHints activeSectionIndex={sectionIndex} showHero={showHero} />}
       {loaded && <NavMenu sectionIndex={sectionIndex} onHome={() => setShowHero(true)} />}
       {loaded && <HUD sectionIndex={sectionIndex} />}
 

@@ -278,11 +278,11 @@ export default function SpaceScene({ onSectionChange }) {
       camera={{ position: [0, 12, 200], fov: 60, near: 0.1, far: 800 }}
       gl={{ antialias: true, alpha: false }}
       dpr={IS_MOBILE ? 1 : [1, 1.5]}
-      style={{ background: '#050d1a' }}
+      style={{ background: '#000000' }}
       onCreated={({ camera, gl }) => {
         camera.lookAt(0, 4, 175)
         gl.domElement.style.touchAction = 'none'
-        gl.setClearColor('#050d1a', 1)
+        gl.setClearColor('#000000', 1)
       }}
     >
       <Scene onSectionChange={onSectionChange} />

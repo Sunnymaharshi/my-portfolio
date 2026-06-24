@@ -20,14 +20,13 @@ const TARGETS = SECTIONS
 const PAD = 56           // px inset from each screen edge
 const _ndc = new THREE.Vector3()
 
-export default function EdgeHints({ activeSectionIndex }) {
+export default function EdgeHints({ activeSectionIndex, showHero }) {
   const refs       = useRef({})
   const activeRef  = useRef(activeSectionIndex)
+  const showHeroRef = useRef(showHero)
 
-  // Keep a ref in sync so the rAF loop always reads the latest section without restarting
-  useEffect(() => {
-    activeRef.current = activeSectionIndex
-  }, [activeSectionIndex])
+  useEffect(() => { activeRef.current = activeSectionIndex }, [activeSectionIndex])
+  useEffect(() => { showHeroRef.current = showHero }, [showHero])
 
   useEffect(() => {
     let rafId
@@ -47,13 +46,14 @@ export default function EdgeHints({ activeSectionIndex }) {
       const cx = w / 2
       const cy = h / 2
       const active = activeRef.current
+      // On mobile: hide all markers when hero is visible or a section card is open
+      const hideAll = IS_MOBILE && (showHeroRef.current || active > 0)
 
       TARGETS.forEach(t => {
         const el = refs.current[t.index]
         if (!el) return
 
-        // Hide the indicator for whichever section the user is currently inside
-        if (t.index === active) {
+        if (hideAll || t.index === active) {
           el.style.opacity = '0'
           el.style.pointerEvents = 'none'
           return
@@ -102,7 +102,7 @@ export default function EdgeHints({ activeSectionIndex }) {
           }
         }
 
-        el.style.opacity = '1'
+        el.style.opacity = IS_MOBILE ? '0.55' : '1'
         el.style.pointerEvents = 'auto'
         el.style.transform = `translate(${ex}px,${ey}px) translate(-50%,-50%)`
       })

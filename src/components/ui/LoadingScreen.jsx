@@ -152,7 +152,7 @@ export default function LoadingScreen({ onReveal, onLoaded }) {
 
       <div style={{
         marginTop: 30, zIndex: 1, fontFamily: "'Space Mono', monospace",
-        fontSize: 10, letterSpacing: '0.34em', color: '#4a6a8a', textTransform: 'uppercase',
+        fontSize: 10, letterSpacing: '0.34em', color: '#4a6a8a', textTransform: 'uppercase', textAlign: 'center',
         opacity: 0, animation: 'loadFadeIn 1s ease 1.4s forwards',
       }}>
         Software Engineer · Full-Stack · AI Systems

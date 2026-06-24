@@ -60,13 +60,18 @@ function PanelShell({ c, accent, children }) {
         <article
           className={`${styles.panel} ${expanded ? styles.expanded : ''}`}
           style={{ '--accent': accent }}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}
         >
-          <div className={styles.grabHandle} aria-hidden="true" />
+          <div
+            className={styles.grabHandle}
+            aria-hidden="true"
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          />
           <button
             className={styles.sheetHead}
             onClick={() => setExpanded((v) => !v)}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
             aria-expanded={expanded}
           >
             <span className={styles.headText}>
@@ -192,7 +197,11 @@ function Contact({ c }) {
                   }
                 </button>
               ) : (
-                <span className={styles.linkArrow}>↗</span>
+                <span className={styles.linkArrow}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4.5 11.5L11.5 4.5M11.5 4.5H6M11.5 4.5V10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </span>
               )}
             </a>
           )

@@ -411,6 +411,6 @@
     align-items: center;
   }
   .linkLabel { width: auto; grid-column: 1; grid-row: 1; }
-  .linkValue  { grid-column: 1; grid-row: 2; font-size: 13px; }
+  .linkValue  { grid-column: 1; grid-row: 2; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; word-break: normal; }
   .linkArrow, .copyBtn { grid-column: 2; grid-row: 1 / 3; align-self: center; }
 }
