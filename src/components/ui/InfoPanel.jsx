@@ -2,16 +2,16 @@ import { useState, useRef } from 'react'
 import styles from './InfoPanel.module.css'
 import { navState } from '../../utils/sharedState'
 import { SECTION_BY_INDEX } from '../../data/sections'
+import { IS_MOBILE } from '../../utils/device'
 
 function goTo(index) {
   const s = SECTION_BY_INDEX[index]
-  if (s) navState.request = s.view
+  if (s) navState.request = (IS_MOBILE && s.viewMobile) ? s.viewMobile : s.view
 }
 
 // ── Hero (section 0) — the landing identity + calls to action ────────────────
 // `visible` is owned by App: shown at first load, hidden once the user starts
 // exploring, and shown again only when they tap Home. (No idle auto-return.)
-const IS_MOBILE = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 820
 
 function Hero({ c, visible }) {
   return (

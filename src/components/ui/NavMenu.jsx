@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import styles from './NavMenu.module.css'
 import { navState } from '../../utils/sharedState'
 import { SECTIONS, SECTION_BY_INDEX } from '../../data/sections'
+import { IS_MOBILE } from '../../utils/device'
 
 // Ordered destinations for the bar (Home + the 4 sectors)
 const ITEMS = SECTIONS
@@ -12,7 +13,7 @@ const TOUR_DWELL = 7000  // ms on each stop (fly-in ~2.5s + reading time)
 
 function flyTo(index) {
   const s = SECTION_BY_INDEX[index]
-  if (s) navState.request = s.view
+  if (s) navState.request = (IS_MOBILE && s.viewMobile) ? s.viewMobile : s.view
 }
 
 export default function NavMenu({ sectionIndex, onHome }) {

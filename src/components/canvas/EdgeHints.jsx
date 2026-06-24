@@ -10,10 +10,9 @@ const TARGETS = SECTIONS
   .map(s => ({
     index: s.index,
     name: s.label.toUpperCase(),
-    // The marker projects from `world + hintOffset` so a section can nudge its
-    // marker off a large/bright object (e.g. About floats below the planet).
     pos: new THREE.Vector3(...s.world).add(new THREE.Vector3(...(s.hintOffset ?? [0, 0, 0]))),
     view: s.view,
+    viewMobile: s.viewMobile,
     color: s.color,
   }))
 
@@ -131,7 +130,7 @@ export default function EdgeHints({ activeSectionIndex, showHero }) {
               el.style.opacity = '0'    // start hidden; rAF shows them once camera is ready
             }
           }}
-          onClick={() => { navState.request = t.view }}
+          onClick={() => { navState.request = (IS_MOBILE && t.viewMobile) ? t.viewMobile : t.view }}
           style={{
             position: 'absolute',
             top: 0,
