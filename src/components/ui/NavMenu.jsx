@@ -88,8 +88,8 @@ export default function NavMenu({ sectionIndex, onHome, onNavigate }) {
       </button>
 
       {resume && (
-        <a className={styles.resume} href={resume} target="_blank" rel="noreferrer">
-          Résumé ↗
+        <a className={styles.resume} href={resume} target="_blank" rel="noreferrer" download>
+          Résumé <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign:'middle',marginLeft:2}}><path d="M12 3v13"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
         </a>
       )}
     </nav>

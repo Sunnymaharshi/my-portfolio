@@ -213,8 +213,8 @@ function Contact({ c }) {
         })}
       </div>
       {c.resume && (
-        <a className={styles.btnPrimary} href={c.resume} target="_blank" rel="noreferrer" style={{ marginTop: 18, display: 'inline-flex' }}>
-          Download Résumé ↗
+        <a className={styles.btnPrimary} href={c.resume} target="_blank" rel="noreferrer" download style={{ marginTop: 18, display: 'inline-flex' }}>
+          Download Résumé <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{verticalAlign:'middle',marginLeft:4}}><path d="M12 3v13"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
         </a>
       )}
     </>
