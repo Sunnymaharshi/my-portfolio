@@ -42,7 +42,6 @@ function Hero({ c }) {
   return (
     <div className={`${styles.heroWrap} ${exploring ? styles.dimmed : ''}`}>
       <div className={styles.hero}>
-        <p className={styles.heroEyebrow}>{c.eyebrow}</p>
         <h1 className={styles.heroName}>{c.name}</h1>
         <p className={styles.heroRole}>{c.role}</p>
         <p className={styles.heroTagline}>{c.tagline}</p>

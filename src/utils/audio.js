@@ -10,7 +10,7 @@ class AudioEngine {
   constructor() {
     this.ctx = null
     this.started = false
-    this.muted = false
+    this.muted = true   // start silent — sound is opt-in via the HUD toggle
     this.master = null
     this.droneGain = null
     this.whooshGain = null
@@ -35,6 +35,12 @@ class AudioEngine {
 
     this._buildDrone()
     this._buildWhoosh()
+
+    // Browsers may create the context in a 'suspended' state even when this runs
+    // inside a user gesture — resume it or the drone is scheduled but never
+    // heard (the toggle would read ON with no sound). resume() is a harmless
+    // no-op on an already-running context.
+    this.ctx.resume?.()
   }
 
   // ── Ambient drone bed ──────────────────────────────────────────────
@@ -156,6 +162,8 @@ class AudioEngine {
   toggleMute() {
     this.muted = !this.muted
     if (this.master && this.ctx) {
+      // Unmuting while the context is suspended would stay silent — resume it.
+      if (!this.muted && this.ctx.state === 'suspended') this.ctx.resume?.()
       this.master.gain.setTargetAtTime(this.muted ? 0 : 0.85, this.ctx.currentTime, 0.2)
     }
     return this.muted

@@ -108,7 +108,7 @@ All section positions and camera view poses live in **`src/data/sections.js`** (
 | sectionIndex | World centre | Sector |
 |---|---|---|
 | 0 (none) | — | Deep Space / Home (hero overlay) |
-| 1 | [25, 6, 70] | Home Planet (About) |
+| 1 | [25, 6, 70] | Origin planet (About) |
 | 2 | [-90, 32, -40] | Skill Nebula (Black Hole) |
 | 3 | [85, -35, -90] | Project Sector |
 | 4 | [-40, -12, -175] | Comm Station (Contact) |
@@ -217,7 +217,7 @@ Each star twinkles via compound-sine (two overlapping frequencies, unique phase 
 | Skills → Projects (≈[-3,-2,-65]) | `#c8deff` silver | 480 |
 | Projects → Contact (≈[23,-24,-133]) | `#3a6a9a` deep blue | 380 |
 
-**Planet** — `position=[25, 6, 70]` (from `sections.js` section 1 `world`), `scale=2.5`. A **cool banded gas giant** (not Earth-like — deliberately alien/moonlit for the About "home planet"). Fully procedural via custom GLSL (no textures):
+**Planet** — `position=[25, 6, 70]` (from `sections.js` section 1 `world`), `scale=2.5`. A **cool banded gas giant** (not Earth-like — deliberately alien/moonlit for the About / "Origin" planet). Fully procedural via custom GLSL (no textures):
 - **Surface shader** (`surfaceVert`/`surfaceFrag`): swirling **latitude bands** — `sin(lat*9 + fbm warp)` domain-warped by two fbm octaves for turbulent flow — in a cool palette (deep indigo → blue → pale cyan), plus a churning **"great storm" oval** (cyan→violet) and cool polar haze. Soft **day/night terminator** (`dot(normal, uLightDir)`); night side stays dim, not black. `uLightDir` matches the scene directional light `[-5,3,5]`. (The old Earth surface — continents/oceans/ice caps/city lights — was replaced.)
 - **Fresnel atmosphere** (`atmoVert`/`atmoFrag`): rim glow `pow(1 - dot(n, viewDir), uPower)`, additive blend, brighter on the day side. Two shells: a tight front-side rim (`#5ea8ff`, scale 1.015) and a wide back-side corona (`#4a90d9`, scale 1.28).
 - **Layered Saturn-style ring** (3 tilted torus bands at r≈1.52/1.78/2.05) + key/fill point lights. Surface rotates `0.035 rad/s`, ring `0.025`. Hover lifts atmosphere intensity. (`cloudRef` is declared but unused — no separate cloud shell now.)
@@ -362,7 +362,7 @@ Font file: `public/fonts/SpaceMono-Regular.ttf`. Star node size is 0.04u radius,
 - **Black hole is a billboarded 2D shader** — the whole Gargantua is one camera-facing plane; it has no true 3D geometry. Looks correct from any approach angle because `<Billboard>` keeps it facing the camera. **Don't add bright line/point objects centered on the black hole** — overlapping colored lines bloom into false rings over the shadow (this is why orbit trails were removed).
 - **Accretion disk bypasses fog** — BlackHole ShaderMaterial has no fog uniforms. Intentional.
 - **Noise grain blend fringes HDR edges** — a `<Noise premultiply blendFunction={SOFT_LIGHT}>` pass at high opacity wraps the black-hole's bright HDR photon ring in a **complement-coloured ring** (the complement of the ring colour is the tell — e.g. an orange/gold halo around the now-cool cyan ring). This cost a long debugging session: the fringe survives Bloom/CA being off and scales with the shader's `holeR`, which makes it look like geometry. Use `BlendFunction.OVERLAY` at `opacity≤0.16` for grain instead. If a colored ring ever reappears on the black hole, suspect the **post-processing chain**, not the shader. (Note: the disk palette is now cool blue/cyan — recolored from gold — so a *warm* fringe is the post-processing tell.)
-- **Audio needs a user gesture** — `audioEngine` is silent until `init()` runs on first click/wheel (browser autoplay policy). Don't expect sound on page load.
+- **Audio needs a user gesture** — `audioEngine` is silent until `init()` runs on first click/wheel (browser autoplay policy). Don't expect sound on page load. `init()` (and `toggleMute` when unmuting) calls `ctx.resume()` because browsers can create the context **suspended** even inside a gesture — without the resume the drone is scheduled but never heard (toggle reads ON, no sound). The HUD audio button **starts** sound on first click (rather than muting), then toggles thereafter.
 - **DepthOfField removed** — it made deep space / the hero view blurry (fixed near focus plane), so it's gone. `multisampling={4}` is now the heaviest post setting; drop it first if profiling for low-end GPUs.
 - **@react-three/postprocessing version** — must stay at v2.x (currently 2.19.1). v3 requires R3F v9.
 - **ConstellationReveal useMemo deps []** — layout computed once on mount; entries/position are static.

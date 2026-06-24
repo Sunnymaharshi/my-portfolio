@@ -4,17 +4,17 @@ import { audioEngine } from '../../utils/audio'
 
 const SECTION_LABELS = [
   'DEEP SPACE',
-  'HOME PLANET — ABOUT',
+  'ORIGIN — ABOUT',
   'SKILL NEBULA — SKILLS',
   'PROJECT SECTOR — PROJECTS',
   'COMM STATION — CONTACT',
 ]
 
 export default function HUD({ sectionIndex }) {
-  const [muted, setMuted] = useState(false)
+  const [muted, setMuted] = useState(true)   // sound off until the user enables it
 
   const onToggleAudio = () => {
-    audioEngine.init()
+    audioEngine.init()                        // unlock/resume the context (gesture)
     setMuted(audioEngine.toggleMute())
   }
 

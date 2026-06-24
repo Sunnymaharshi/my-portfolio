@@ -35,7 +35,6 @@ export const SECTIONS = [
     view: { pos: [0, 12, 200], look: [0, 4, 175] },
     content: {
       kind: 'hero',
-      eyebrow: 'PORTFOLIO · 2026',
       name: 'Maharshi Reddy',
       role: 'Software Engineer II — Full-Stack · AI Systems',
       tagline:
@@ -43,7 +42,7 @@ export const SECTIONS = [
     },
   },
 
-  // ── 1 · ABOUT (Home Planet) ────────────────────────────────────────────────
+  // ── 1 · ABOUT (Origin planet) ───────────────────────────────────────────────
   {
     index: 1,
     id: 'about',
@@ -57,7 +56,7 @@ export const SECTIONS = [
     view: { pos: [22, 5, 52], look: [25, 6, 70] },
     content: {
       kind: 'about',
-      eyebrow: '// HOME PLANET',
+      eyebrow: '// ORIGIN',
       title: 'About',
       lead:
         "I'm a frontend engineer with full-stack range. For 4+ years I've built enterprise data platforms and e-commerce apps — increasingly with AI woven in: RAG pipelines, LangGraph agents, vector search. I like owning a problem end to end, from the architecture call to the production ship.",
@@ -104,6 +103,8 @@ export const SECTIONS = [
     label: 'Skills',
     color: '#5ec8e6',
     world: [-90, 32, -40],
+    // Float the marker just below the black hole's disk.
+    hintOffset: [0, -4.5, 0],
     view: { pos: [-66, 24, -45], look: [-90, 32, -40] },
     content: {
       kind: 'skills',
@@ -200,7 +201,7 @@ export const SECTIONS = [
         { label: 'GitHub', value: 'github.com/Sunnymaharshi', href: 'https://github.com/Sunnymaharshi' },
         { label: 'LinkedIn', value: 'linkedin.com/in/maharshireddy', href: 'https://linkedin.com/in/maharshireddy' },
       ],
-      resume: '/resume.pdf',
+      resume: '/Maharshi_Reddy_Resume.pdf',
     },
   },
 ]

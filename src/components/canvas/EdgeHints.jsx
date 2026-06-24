@@ -63,21 +63,23 @@ export default function EdgeHints({ activeSectionIndex }) {
 
         const inFront   = _ndc.z <= 1                            // in front of near plane
         const inViewport = Math.abs(_ndc.x) <= 1 && Math.abs(_ndc.y) <= 1
-        const onScreen  = inFront && inViewport                  // float in-world when looking toward it
+        const onScreen  = inFront && inViewport
 
         let ex, ey
 
         if (onScreen) {
-          // Section is visible: float the hint at its exact projected position
+          // Object is in view: pin the marker exactly where it is in space
           ex = (_ndc.x *  0.5 + 0.5) * w
           ey = (1 - (_ndc.y * 0.5 + 0.5)) * h
         } else {
-          // Section is off-screen or behind — clamp to screen edge
+          // Off-screen or behind — clamp to the screen edge as a directional
+          // cue, so you can rotate the camera toward it until the object comes
+          // into view (the marker then slides onto it in space).
           let sx = (_ndc.x *  0.5 + 0.5) * w
           let sy = (1 - (_ndc.y * 0.5 + 0.5)) * h
 
-          // Behind camera: perspective divide by negative w already negated x/y in NDC.
-          // Mirror to restore correct edge direction.
+          // Behind camera: perspective divide by negative w already negated x/y
+          // in NDC. Mirror around centre to restore the correct edge direction.
           if (_ndc.z > 1) {
             sx = w - sx
             sy = h - sy
