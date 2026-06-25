@@ -54,7 +54,7 @@ export const SECTIONS = [
     // World-space offset → scales correctly with viewing distance.
     hintOffset: [0, -4.5, 0],
     view:       { pos: [15, 7, 81], look: [29, 6, 71] },
-    viewMobile: { pos: [41, 7, 70], look: [25, 6, 70] },
+    viewMobile: { pos: [40, 7, 70], look: [25, 6, 70] },
     content: {
       kind: 'about',
       eyebrow: '// ORIGIN',
