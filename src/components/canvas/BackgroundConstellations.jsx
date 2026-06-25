@@ -55,7 +55,7 @@ const CONSTELLATIONS = [
   },
   {
     id: "cassiopeia",
-    center: [-125, -52, -72],
+    center: [-125, -3000, -72],
     scale: 11,
     color: "#c8deff",
     stars: [
@@ -74,7 +74,7 @@ const CONSTELLATIONS = [
   },
   {
     id: "leo",
-    center: [50, 48, -158],
+    center: [50, -3000, -158],
     scale: 10,
     color: "#b9c4ef",
     stars: [
