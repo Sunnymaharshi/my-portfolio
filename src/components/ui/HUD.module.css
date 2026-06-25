@@ -74,9 +74,9 @@
   top: 50%;
   left: -1px;
   right: -1px;
-  height: 1.5px;
+  height: 1px;
   background: currentColor;
-  transform: translateY(-50%) rotate(-35deg);
+  transform: translateY(-50%) rotate(-52deg);
   border-radius: 1px;
 }
 .audioLabel { font-size: 8px; letter-spacing: 0.18em; opacity: 0.85; }
