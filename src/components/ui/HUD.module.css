@@ -62,7 +62,7 @@
   color: var(--accent-moon);
   background: rgba(10, 22, 40, 0.6);
 }
-.audioIcon { font-size: 13px; line-height: 1; }
+.audioIcon { display: flex; align-items: center; line-height: 1; }
 .audioLabel { font-size: 8px; letter-spacing: 0.18em; opacity: 0.85; }
 
 /* ── Bottom hint ───────────────────────────────── */
