@@ -7,7 +7,7 @@ import { useFrame } from "@react-three/fiber";
 const CONSTELLATIONS = [
   {
     id: "orion",
-    center: [100, -60, 75], // bottom-right of entry view (right + below horizon)
+    center: [100, -3000, 75], // bottom-right of entry view (right + below horizon)
     scale: 6,
     color: "#c8deff",
     stars: [
@@ -31,7 +31,7 @@ const CONSTELLATIONS = [
   },
   {
     id: "big-dipper",
-    center: [114, -20, 15],
+    center: [114, -3000, -200],
     scale: 12,
     color: "#7bb3f0",
     stars: [

@@ -86,7 +86,7 @@ function buildButterfly({ count, length, flare }) {
   return g
 }
 
-export default function ButterflyNebula({ position = [0, 0, 0], rotation = [0, 0, 0] }) {
+export default function ButterflyNebula({ position = [0, 0, 0], rotation = [0, 0, 0], scale = 1 }) {
   const ref = useRef()
   const geo = useMemo(
     () => buildButterfly({ count: IS_MOBILE ? 3200 : 7000, length: 6.5, flare: 6.5 }),
@@ -106,7 +106,7 @@ export default function ButterflyNebula({ position = [0, 0, 0], rotation = [0, 0
   })
 
   return (
-    <group position={position} rotation={rotation}>
+    <group position={position} rotation={rotation} scale={scale}>
       <points ref={ref} geometry={geo} material={mat} />
       {/* glowing nucleus */}
       <mesh>

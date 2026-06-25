@@ -2,6 +2,35 @@ import { useRef, useMemo, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Billboard, Text } from '@react-three/drei'
 import * as THREE from 'three'
+import { IS_MOBILE } from '../../utils/device'
+import { circleSprite } from '../../utils/sprite'
+
+const cnt = n => Math.round(IS_MOBILE ? n * 0.5 : n)
+
+// AGN disk shader — particles shrink AND fade with distance so the ring
+// doesn't bloom into a bright halo when viewed from far away.
+const agxVert = /* glsl */`
+  attribute vec3 aColor;
+  varying vec3 vColor;
+  varying float vDist;
+  void main() {
+    vColor = aColor;
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vDist = max(-mv.z, 1.0);
+    gl_PointSize = clamp(150.0 / vDist, 1.0, 4.0);
+    gl_Position = projectionMatrix * mv;
+  }
+`
+const agxFrag = /* glsl */`
+  varying vec3 vColor;
+  varying float vDist;
+  void main() {
+    vec2 uv = gl_PointCoord - 0.5;
+    if (length(uv) > 0.5) discard;
+    float fade = clamp(1.0 - (vDist - 20.0) / 180.0, 0.0, 1.0);
+    gl_FragColor = vec4(vColor, fade * 0.70);
+  }
+`
 
 const FONT = '/fonts/SpaceMono-Regular.ttf'
 
@@ -225,8 +254,42 @@ export default function BlackHole({ position = [-5, 0, 4], showLabels = false, a
     transparent: true, depthWrite: false, depthTest: true, side: THREE.DoubleSide,
   }), [])
 
-  useFrame((state) => {
+  // AGN galaxy disk — flat galactic plane beyond the skill orbs (r 8–22u)
+  const agxRef = useRef()
+  const agxGeo = useMemo(() => {
+    const n = cnt(1600)
+    const pos = new Float32Array(n * 3)
+    const col = new Float32Array(n * 3)
+    const cInner = new THREE.Color('#7aaee8')
+    const cOuter = new THREE.Color('#c8deff')
+    for (let i = 0; i < n; i++) {
+      // Uniform area distribution so density doesn't pile up at inner edge
+      const r     = Math.sqrt(8 * 8 + Math.random() * (22 * 22 - 8 * 8))
+      const theta = Math.random() * Math.PI * 2
+      // Very thin disk — galactic plane, not a cloud
+      const y     = (Math.random() - 0.5) * 0.12
+      pos[i * 3]     = Math.cos(theta) * r
+      pos[i * 3 + 1] = y
+      pos[i * 3 + 2] = Math.sin(theta) * r
+      const t = (r - 8) / 14
+      const c = cInner.clone().lerp(cOuter, t)
+      col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b
+    }
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+    g.setAttribute('aColor',   new THREE.BufferAttribute(col, 3))
+    return g
+  }, [])
+
+  const agxMat = useMemo(() => new THREE.ShaderMaterial({
+    vertexShader: agxVert, fragmentShader: agxFrag,
+    transparent: true, depthWrite: false,
+    blending: THREE.AdditiveBlending, fog: false,
+  }), [])
+
+  useFrame((state, dt) => {
     diskMat.uniforms.uTime.value = state.clock.elapsedTime
+    if (agxRef.current) agxRef.current.rotation.y += dt * 0.008
   })
 
   return (
@@ -246,6 +309,9 @@ export default function BlackHole({ position = [-5, 0, 4], showLabels = false, a
 
       {/* Orbiting skill icons — readable copy now lives in the DOM Skills panel */}
       {SKILLS.map((s) => <SkillOrb key={s.name} skill={s} showLabels={showLabels} />)}
+
+      {/* AGN galaxy disk — galactic plane surrounding the black hole core */}
+      <points ref={agxRef} geometry={agxGeo} material={agxMat} />
     </group>
   )
 }

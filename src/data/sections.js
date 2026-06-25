@@ -53,8 +53,8 @@ export const SECTIONS = [
     // it sits just under the (large, bright) disk instead of on top of it.
     // World-space offset → scales correctly with viewing distance.
     hintOffset: [0, -4.5, 0],
-    view:       { pos: [22, 5, 52], look: [19, 6, 70] },
-    viewMobile: { pos: [22, 5, 52], look: [25, 6, 70] },
+    view:       { pos: [15, 7, 81], look: [29, 6, 71] },
+    viewMobile: { pos: [25, 7, 85], look: [25, 6, 70] },
     content: {
       kind: 'about',
       eyebrow: '// ORIGIN',
@@ -106,8 +106,8 @@ export const SECTIONS = [
     world: [-90, 32, -40],
     // Float the marker just below the black hole's disk.
     hintOffset: [0, -4.5, 0],
-    view:       { pos: [-66, 24, -45], look: [-91, 32, -49] },
-    viewMobile: { pos: [-66, 24, -45], look: [-90, 32, -40] },
+    view:       { pos: [-73, 28, -52], look: [-100, 32, -40] },
+    viewMobile: { pos: [-74, 29, -40], look: [-90, 32, -40] },
     content: {
       kind: 'skills',
       eyebrow: '// SKILL NEBULA',
@@ -144,9 +144,9 @@ export const SECTIONS = [
     id: 'projects',
     label: 'Projects',
     color: '#45c7c0',
-    world: [85, -35, -90],
-    view:       { pos: [66, -27, -83], look: [87, -35, -82] },
-    viewMobile: { pos: [66, -27, -83], look: [85, -35, -90] },
+    world: [-65, -35, -120],
+    view:       { pos: [-50, -28, -107], look: [-57, -33, -117] },
+    viewMobile: { pos: [-50, -28, -107], look: [-65, -35, -120] },
     content: {
       kind: 'projects',
       eyebrow: '// PROJECT SECTOR',
@@ -193,8 +193,9 @@ export const SECTIONS = [
     label: 'Contact',
     color: '#4a90d9',
     world: [-40, -12, -175],
-    view:       { pos: [-34, -10, -159], look: [-34, -12, -177] },
-    viewMobile: { pos: [-34, -10, -159], look: [-40, -12, -175] },
+    hintOffset: [0, -8, 0],
+    view:       { pos: [-18, -5, -133], look: [-32, -10, -172] },
+    viewMobile: { pos: [-18, -5, -133], look: [-40, -12, -175] },
     content: {
       kind: 'contact',
       eyebrow: '// COMM STATION',

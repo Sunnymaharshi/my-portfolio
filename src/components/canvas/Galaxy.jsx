@@ -20,7 +20,7 @@ const galaxyVert = /* glsl */`
     vColor = aColor;
     vT = aTwinkle;
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = aSize * (300.0 / -mv.z);
+    gl_PointSize = max(1.0, aSize * (300.0 / -mv.z));
     gl_Position = projectionMatrix * mv;
   }
 `
@@ -157,6 +157,112 @@ export default function Galaxy() {
         params={{
           count: cnt(3600), radius: 20, arms: 2, spin: 0.75, randomness: 0.24,
           coreColor: '#e6ecff', armColor: '#5aa0d9',
+        }}
+      />
+
+      {/* ── Positive-Z galaxies — far behind starting camera, ~1400–1800u ── */}
+      <SpiralGalaxy
+        position={[350, 120, 1400]}
+        rotation={[0.55, -0.38, 0.3]}
+        scale={1.1}
+        spinSpeed={0.016}
+        params={{
+          count: cnt(5000), radius: 24, arms: 3, spin: 0.52, randomness: 0.19,
+          coreColor: '#ffeedd', armColor: '#6b9de8',
+        }}
+      />
+      <SpiralGalaxy
+        position={[-380, -165, 1600]}
+        rotation={[1.15, 0.5, -0.48]}
+        scale={0.9}
+        spinSpeed={-0.019}
+        params={{
+          count: cnt(3800), radius: 20, arms: 2, spin: 0.68, randomness: 0.22,
+          coreColor: '#ffe8f0', armColor: '#7272e8',
+        }}
+      />
+      <SpiralGalaxy
+        position={[120, -300, 1800]}
+        rotation={[0.82, 0.22, 0.42]}
+        scale={1.0}
+        spinSpeed={0.011}
+        params={{
+          count: cnt(4400), radius: 23, arms: 4, spin: 0.6, randomness: 0.21,
+          coreColor: '#ddeeff', armColor: '#5a8fe0',
+        }}
+      />
+      <SpiralGalaxy
+        position={[-280, 240, 1400]}
+        rotation={[0.35, 0.7, -0.25]}
+        scale={0.7}
+        spinSpeed={0.022}
+        params={{
+          count: cnt(2800), radius: 18, arms: 3, spin: 0.45, randomness: 0.25,
+          coreColor: '#cce8ff', armColor: '#6080d8',
+        }}
+      />
+
+      {/* ── Upper-hemisphere galaxies — ~1400–1600u above ── */}
+      <SpiralGalaxy
+        position={[55, 1400, -100]}
+        rotation={[0.12, 0.5, 0.08]}
+        scale={1.2}
+        spinSpeed={0.013}
+        params={{
+          count: cnt(5200), radius: 25, arms: 3, spin: 0.5, randomness: 0.19,
+          coreColor: '#ffe8cc', armColor: '#5a90e0',
+        }}
+      />
+      <SpiralGalaxy
+        position={[-150, 1500, 280]}
+        rotation={[1.5, 0.3, 0.4]}
+        scale={0.9}
+        spinSpeed={-0.017}
+        params={{
+          count: cnt(3600), radius: 21, arms: 2, spin: 0.7, randomness: 0.23,
+          coreColor: '#e8d8ff', armColor: '#7060d8',
+        }}
+      />
+      <SpiralGalaxy
+        position={[230, 1600, -420]}
+        rotation={[0.9, -0.4, 0.5]}
+        scale={1.1}
+        spinSpeed={0.015}
+        params={{
+          count: cnt(4400), radius: 23, arms: 4, spin: 0.62, randomness: 0.21,
+          coreColor: '#ddeeff', armColor: '#6888d8',
+        }}
+      />
+
+      {/* ── Lower-hemisphere galaxies — ~1400–1600u below ── */}
+      <SpiralGalaxy
+        position={[70, -1500, -120]}
+        rotation={[0.18, -0.4, 0.1]}
+        scale={1.1}
+        spinSpeed={-0.014}
+        params={{
+          count: cnt(4800), radius: 24, arms: 3, spin: 0.55, randomness: 0.20,
+          coreColor: '#ffeedd', armColor: '#6094e0',
+        }}
+      />
+      <SpiralGalaxy
+        position={[-140, -1400, 250]}
+        rotation={[1.3, 0.6, -0.35]}
+        scale={0.85}
+        spinSpeed={0.02}
+        params={{
+          count: cnt(3400), radius: 20, arms: 2, spin: 0.72, randomness: 0.24,
+          coreColor: '#d8e8ff', armColor: '#5878d8',
+        }}
+      />
+      <SpiralGalaxy
+        position={[220, -1600, -380]}
+        rotation={[1.1, 0.5, 0.45]}
+        scale={1.0}
+        spinSpeed={-0.016}
+        params={{
+          count: cnt(4000), radius: 22, arms: 4, spin: 0.6, randomness: 0.22,
+          coreColor: '#ccd8ff', armColor: '#5868e0',
         }}
       />
     </>

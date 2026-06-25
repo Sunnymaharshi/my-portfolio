@@ -9,16 +9,20 @@ import { audioEngine } from '../../utils/audio'
 import { SECTIONS, SECTION_BY_INDEX } from '../../data/sections'
 import { IS_MOBILE, RENDER_DPR, RENDER_MSAA } from '../../utils/device'
 
+import DistantBeacon from './DistantBeacon'
 import Stars from './Stars'
 import Galaxy from './Galaxy'
 import ButterflyNebula from './ButterflyNebula'
 import StarCluster from './StarCluster'
+import SupernovaRemnant from './SupernovaRemnant'
+import PlanetaryNebula from './PlanetaryNebula'
+import EmissionNebula from './EmissionNebula'
 import BackgroundConstellations from './BackgroundConstellations'
 import NebulaParticles from './NebulaParticles'
-import Planet from './Planet'
+import StellarNursery from './StellarNursery'
 import BlackHole from './BlackHole'
-import ProjectGalaxy from './ProjectGalaxy'
-import SpaceStation from './SpaceStation'
+import BinaryStarSystem from './BinaryStarSystem'
+import Pulsar from './Pulsar'
 import SectionStars from './SectionBeacons'
 
 // World-space centres of each section — derived from the single source of truth
@@ -232,12 +236,49 @@ function Scene({ onSectionChange }) {
 
       <Stars />
       <Galaxy />
-      <ButterflyNebula position={[150, 20, -105]} rotation={[0.2, Math.PI / 2, 0.12]} />
-      <StarCluster position={[-55, 50, 35]} radius={9} />
+      {/*
+        ── Decorative deep-space objects ──────────────────────────────────────
+          CLOSE  scale 0.55–0.70  ~150u   — entry view / near sections
+          MID    scale 2.2       ~900–1100u — fills sky at moderate zoom-out
+          FAR    scale 5.0       ~1400–1600u — beacon-marked; visible far out
+          Positions chosen so objects span the full FOV when camera backs up.
+        ─────────────────────────────────────────────────────────────────────*/}
+
+      {/* ── CLOSE — entry view anchors ── */}
+      <ButterflyNebula  position={[-155, -108,  45]}  scale={0.70} rotation={[0.3, -0.6, 0.1]} />
+      <SupernovaRemnant position={[-158,  -80,  80]}  scale={0.65} />
+      <PlanetaryNebula  position={[ 165,  -90,  45]}  scale={0.60} />
+      <EmissionNebula   position={[ 120,   90,-350]}  scale={0.60} />
+      <StarCluster      position={[ -55,   50,  35]}  radius={9} />
+
+      {/* ── MID — 6 directional sectors, ~900–1100u from origin ── */}
+      {/* right-upper  */}<ButterflyNebula  position={[-950,  180,-500]}  scale={2.2} rotation={[0.5, Math.PI*0.85, 0.3]} />
+      {/* left-lower   */}<ButterflyNebula  position={[-1000,-900,-500]}  scale={2.2} rotation={[0.2, Math.PI/2,   0.12]} />
+      {/* left-upper   */}<SupernovaRemnant position={[-800,  180,-400]}  scale={2.2} />
+      {/* center-below */}<SupernovaRemnant position={[-300, -950,-300]}  scale={2.2} />
+      {/* right-lower  */}<PlanetaryNebula  position={[1000, -800, 400]}  scale={2.2} />
+      {/* left-upper   */}<PlanetaryNebula  position={[-700,  180,-600]}  scale={2.2} />
+      {/* below-center */}<EmissionNebula   position={[ 100, -950, 400]}  scale={2.2} />
+      {/* left-center  */}<EmissionNebula   position={[-950, -400,-300]}  scale={2.2} />
+      {/* right-lower  */}<StarCluster      position={[ 900, -800,-400]}  radius={14} spin={ 0.015} />
+      {/* left-lower   */}<StarCluster      position={[-800, -800,-500]}  radius={12} spin={-0.01}  />
+
+      {/* ── FAR — beacon-marked corners, ~1400–1600u out ── */}
+      <ButterflyNebula  position={[ 1500,   250,-300]}  scale={5.0} rotation={[1.2, 0.5, 0.3]} />
+      <DistantBeacon    position={[ 1500,   250,-300]}  color="#c8e0ff" />
+      <SupernovaRemnant position={[ 1500, -1300,-300]}  scale={5.0} />
+      <DistantBeacon    position={[ 1500, -1300,-300]}  color="#a0d0f8" />
+      <PlanetaryNebula  position={[-1400, -1400,-300]}  scale={5.0} />
+      <DistantBeacon    position={[-1400, -1400,-300]}  color="#88d8f0" />
+      <EmissionNebula   position={[ 1500,   200,  800]}  scale={5.0} />
+      <DistantBeacon    position={[ 1500,   200,  800]}  color="#90dce8" />
+      <StarCluster      position={[-1300,   350,-600]}  radius={32} spin={0.007} />
+      <DistantBeacon    position={[-1300,   350,-600]}  color="#d0e8ff" />
+
       <BackgroundConstellations />
       {/* <NebulaParticles /> */}
 
-      <Planet position={SECTION_BY_INDEX[1].world} scale={2.5} />
+      <StellarNursery position={SECTION_BY_INDEX[1].world} />
 
       <BlackHole
         position={SECTION_BY_INDEX[2].world}
@@ -245,9 +286,9 @@ function Scene({ onSectionChange }) {
         active={sectionIndex === 2}
       />
 
-      <ProjectGalaxy center={SECTION_BY_INDEX[3].world} sectionActive={sectionIndex === 3} />
+      <BinaryStarSystem position={SECTION_BY_INDEX[3].world} />
 
-      <SpaceStation position={SECTION_BY_INDEX[4].world} active={sectionIndex === 4} />
+      <Pulsar position={SECTION_BY_INDEX[4].world} />
 
       <SectionStars />
 
@@ -275,7 +316,7 @@ function Scene({ onSectionChange }) {
 export default function SpaceScene({ onSectionChange }) {
   return (
     <Canvas
-      camera={{ position: [0, 12, 200], fov: 60, near: 0.1, far: 800 }}
+      camera={{ position: [0, 12, 200], fov: 60, near: 0.1, far: 6000 }}
       gl={{ antialias: true, alpha: false }}
       dpr={RENDER_DPR}
       style={{ background: '#000000' }}
